@@ -1,0 +1,6 @@
+myvenv
+/static
+__pycache__
+.cache
+dist
+node_modules
