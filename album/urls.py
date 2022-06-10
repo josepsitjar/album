@@ -17,5 +17,8 @@ router.register(r'albums', views.AlbumViewSet)
 # Additionally, we include login URLs for the browsable API
 urlpatterns = [
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework_album'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework_album')),
+    # djoser
+    path('auth/v1/', include('djoser.urls')),
+    path('auth/v1/', include('djoser.urls.authtoken')),
 ]
