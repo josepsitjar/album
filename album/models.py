@@ -1,7 +1,19 @@
+import datetime
+
+from django.contrib.auth.models import UserManager
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import (
+    BaseUserManager, AbstractBaseUser, PermissionsMixin, User, AbstractUser
+)
+from django.utils import timezone
+
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils import timezone
 from django.conf import settings
 from djgeojson.fields import PointField
+
+
 
 # Create your models here.
 
@@ -35,3 +47,16 @@ class Photo(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# User Models for app register
+# https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html
+# Token django rest framework
+# https://simpleisbetterthancomplex.com/tutorial/2018/11/22/how-to-implement-token-authentication-using-django-rest-framework.html
+# How to user JWT token
+# https://simpleisbetterthancomplex.com/tutorial/2018/12/19/how-to-use-jwt-authentication-with-django-rest-framework.html
+
+class User(AbstractUser):
+    bio = models.TextField(max_length=500, blank=True)
+    location = models.CharField(max_length=30, blank=True, null=True)
+    birth_date = models.DateField(null=True, blank=True)
