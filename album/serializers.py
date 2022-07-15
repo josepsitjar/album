@@ -1,7 +1,7 @@
 from album.models import Photo, Person, Album, User
 from rest_framework import serializers
 from django.contrib.auth import authenticate, login
-from .utils import get_tokens_for_user
+from .utils import get_tokens_for_user, get_drf_user_token
 from rest_framework.response import  Response
 from rest_framework import permissions, generics, status
 
@@ -21,7 +21,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ['title', 'description', 'created_date', 'geom']
+        fields = ['title', 'description', 'created_date', 'geom', 'image', 'user']
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -42,6 +42,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'password': 'Passwords must match.'})
         user.set_password(password)
         user.save()
+
+        get_drf_user_token(user)
+
         return user
 
 class LoginSerializer(serializers.Serializer):

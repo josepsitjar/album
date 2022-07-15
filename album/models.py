@@ -43,7 +43,8 @@ class Photo(models.Model):
     geom = PointField(null=True, blank=True)
     album = models.ForeignKey(Album, related_name='photos', on_delete=models.SET_NULL, null=True, blank=True)
     persons = models.ManyToManyField(Person, blank=True)
-    image = models.ImageField(upload_to='uploads/', null=True, blank=True)
+    image = models.ImageField(upload_to='photos/', null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -55,6 +56,8 @@ class Photo(models.Model):
 # https://simpleisbetterthancomplex.com/tutorial/2018/11/22/how-to-implement-token-authentication-using-django-rest-framework.html
 # How to user JWT token
 # https://simpleisbetterthancomplex.com/tutorial/2018/12/19/how-to-use-jwt-authentication-with-django-rest-framework.html
+
+# Authentication simple --> https://www.django-rest-framework.org/api-guide/authentication/
 
 class User(AbstractUser):
     bio = models.TextField(max_length=500, blank=True)
