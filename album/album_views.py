@@ -50,7 +50,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     #authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
