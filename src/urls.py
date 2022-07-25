@@ -20,7 +20,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('album.urls')),
+    path('apidjrframework/', include('album.urls')),
     path('api-auth/', include('rest_framework.urls')),
 
 ]
