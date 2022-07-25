@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-0563am4so1+7iu2b9-_0#i(=alma0+*rl=1g(4d26oz$(%i2$j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'http://localhost:8080']
+
+ALLOWED_HOSTS = ['localhost', '82.223.13.59', '127.0.0.1', 'http://localhost:8080']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -112,6 +113,20 @@ DATABASES = {
     }
 }
 
+# Database postgis
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': '',
+        'USER':  '',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -148,6 +163,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads/')
@@ -160,6 +176,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #AUTH_PROFILE_MODULE = 'album.User'
 #AUTH_USER_MODEL = 'album.MyUser'
 AUTH_USER_MODEL = 'album.User'
+
+
 
 """
 REST_FRAMEWORK = {
