@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.authtoken.models import Token
 
+
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 
@@ -18,3 +19,12 @@ def get_drf_user_token(user):
     return {
         'token': str(token)
     }
+
+
+def user_directory_path(instance, filename):
+    """
+    Define the path where uploads will be saved.
+    Model must include user instance.
+    """
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'user_{0}/{1}'.format(instance.user.id, filename)

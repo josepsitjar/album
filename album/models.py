@@ -12,6 +12,9 @@ from django.db.models.signals import post_save
 from django.utils import timezone
 from django.conf import settings
 from djgeojson.fields import PointField
+import os
+
+from .utils import user_directory_path
 
 
 
@@ -34,6 +37,9 @@ class Person(models.Model):
     def __str__(self):
         return self.name
 
+
+
+
 class Photo(models.Model):
     """Model for photos"""
 
@@ -43,11 +49,14 @@ class Photo(models.Model):
     geom = PointField(null=True, blank=True)
     album = models.ForeignKey(Album, related_name='photos', on_delete=models.SET_NULL, null=True, blank=True)
     persons = models.ManyToManyField(Person, blank=True)
-    image = models.ImageField(upload_to='photos/', null=True, blank=True)
+    #image = models.ImageField(upload_to='photos/', null=True, blank=True)
+    image = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.title
+
+
 
 
 # User Models for app register
