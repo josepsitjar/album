@@ -51,6 +51,7 @@ class Photo(models.Model):
     persons = models.ManyToManyField(Person, blank=True)
     #image = models.ImageField(upload_to='photos/', null=True, blank=True)
     image = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
+    tags = models.CharField(max_length=4000, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):

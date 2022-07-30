@@ -27,4 +27,4 @@ def user_directory_path(instance, filename):
     Model must include user instance.
     """
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    return 'user_{0}/{1}'.format(instance.user.id, filename)
+    return 'images/user_{0}/{1}'.format(instance.user.id, filename)
