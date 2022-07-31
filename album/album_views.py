@@ -42,6 +42,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     #permission_classes = [permissions.IsAuthenticated]
 
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user']
 
     def get(self, request, format=None):
