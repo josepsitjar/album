@@ -25,9 +25,12 @@ class Album(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
+    image = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.title
+        
 
 class Person(models.Model):
     """Model for Persons in photo"""
