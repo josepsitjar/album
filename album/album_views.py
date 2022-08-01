@@ -65,7 +65,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
     #authentication_classes = [SessionAuthentication, BasicAuthentication]
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['id', 'user']
+    filterset_fields = ['id', 'user', 'album']
     #search_fields = ['user']
 
     def get(self, request, format=None):
