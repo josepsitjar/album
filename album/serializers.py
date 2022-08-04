@@ -36,7 +36,7 @@ class PhotoLocalizationSerializer(GeoFeatureModelSerializer):
 
         # you can also explicitly declare which fields you want to include
         # as with a ModelSerializer.
-        fields = ('title', 'description', 'created_date', 'geom', 'image', 'user', 'album')
+        fields = ('title', 'description', 'created_date', 'image', 'user', 'album')
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
