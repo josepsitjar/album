@@ -84,7 +84,7 @@ class PhotoLocalizationViewSet(viewsets.ModelViewSet):
     API endpoint that allows photos location
     """
 
-    queryset = Photo.objects.all()
+    queryset = Photo.objects.exclude(geom__isnull = True)
     serializer_class = PhotoLocalizationSerializer
     permission_classes = [IsAuthenticated]
 
