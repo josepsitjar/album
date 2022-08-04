@@ -4,10 +4,12 @@ from album.models import Photo, Album
 from rest_framework import viewsets
 from rest_framework import permissions, generics, status
 from rest_framework.permissions import IsAuthenticated
-from album.serializers import PhotoSerializer, AlbumSerializer
+from album.serializers import PhotoSerializer, AlbumSerializer, PhotoLocalizationSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 #from rest_framework import filters
+
+from rest_framework_gis.filters import InBBoxFilter
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -64,6 +66,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     #authentication_classes = [SessionAuthentication, BasicAuthentication]
 
+
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user', 'album']
     #search_fields = ['user']
@@ -76,6 +79,25 @@ class PhotoViewSet(viewsets.ModelViewSet):
         return Response(content)
 
 
+class PhotoLocalizationViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows photos location
+    """
+
+    queryset = Photo.objects.all()
+    serializer_class = PhotoLocalizationSerializer
+    permission_classes = [IsAuthenticated]
+
+    bbox_filter_field = 'geom'
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter, InBBoxFilter,)
+    bbox_filter_include_overlapping = True # Optional
+
+    def get(self, request, format=None):
+        content = {
+            'user': str(request.user),  # `django.contrib.auth.User` instance.
+            'auth': str(request.auth),  # None
+        }
+        return Response(content)
 
 
 """

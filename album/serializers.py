@@ -5,6 +5,9 @@ from .utils import get_tokens_for_user, get_drf_user_token
 from rest_framework.response import  Response
 from rest_framework import permissions, generics, status
 
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
+
+
 
 class AlbumSerializer(serializers.ModelSerializer):
     """Class to serialize albums"""
@@ -22,6 +25,18 @@ class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = ['title', 'description', 'created_date', 'geom', 'image', 'user', 'album']
+
+
+class PhotoLocalizationSerializer(GeoFeatureModelSerializer):
+    """ A class to serialize locations as GeoJSON compatible data """
+
+    class Meta:
+        model = Photo
+        geo_field = "geom"
+
+        # you can also explicitly declare which fields you want to include
+        # as with a ModelSerializer.
+        fields = ('title', 'description', 'created_date', 'geom', 'image', 'user', 'album')
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

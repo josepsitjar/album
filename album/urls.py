@@ -16,6 +16,8 @@ router.register(r'photos', album_views.PhotoViewSet)
 #router.register(r'photos/(?P<photo_pk>\d+)', album_views.PhotoViewSet)
 router.register(r'albums', album_views.AlbumViewSet)
 
+router.register(r'photosGeojson', album_views.PhotoLocalizationViewSet) # photos geojson feature collection
+
 
 
 
