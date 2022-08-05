@@ -2,11 +2,13 @@ from django.shortcuts import render
 
 from album.models import Photo, Album
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from rest_framework import permissions, generics, status
 from rest_framework.permissions import IsAuthenticated
 from album.serializers import PhotoSerializer, AlbumSerializer, PhotoLocalizationSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.renderers import JSONRenderer
 #from rest_framework import filters
 
 from rest_framework_gis.filters import InBBoxFilter
@@ -22,6 +24,7 @@ from .utils import get_tokens_for_user, get_drf_user_token
 from rest_framework.authtoken.models import Token
 
 from .serializers import RegistrationSerializer, PasswordChangeSerializer, LoginSerializer
+
 
 # Create your views here.
 
@@ -79,18 +82,34 @@ class PhotoViewSet(viewsets.ModelViewSet):
         return Response(content)
 
 
-class PhotoLocalizationViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows photos location
-    """
+
+class PhotoLocalizationViewSet(viewsets.ViewSet):
 
     queryset = Photo.objects.exclude(geom__isnull = True)
-    serializer_class = PhotoLocalizationSerializer
+
     permission_classes = [IsAuthenticated]
 
-    bbox_filter_field = 'geom'
-    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter, InBBoxFilter,)
-    bbox_filter_include_overlapping = True # Optional
+    def list(self, request):
+
+        data_list = []
+        for photo in Photo.objects.all():
+
+            json = {
+              "type": "Feature",
+              "properties": {},
+              "geometry": {
+                "type": "Point",
+                "coordinates": photo.geom
+              }
+            }
+            data_list.append(json)
+
+        featureCollection = {
+          "type": "FeatureCollection",
+          "features": data_list
+        }
+        return Response(featureCollection, status=status.HTTP_200_OK)
+
 
     def get(self, request, format=None):
         content = {
@@ -98,6 +117,8 @@ class PhotoLocalizationViewSet(viewsets.ModelViewSet):
             'auth': str(request.auth),  # None
         }
         return Response(content)
+
+
 
 
 """

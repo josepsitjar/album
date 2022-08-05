@@ -11,8 +11,9 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 from django.conf import settings
-from djgeojson.fields import PointField
+from djgeojson.fields import PointField, GeometryField
 import os
+
 
 from .utils import user_directory_path
 
@@ -30,7 +31,7 @@ class Album(models.Model):
 
     def __str__(self):
         return self.title
-        
+
 
 class Person(models.Model):
     """Model for Persons in photo"""

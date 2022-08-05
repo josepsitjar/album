@@ -5,7 +5,8 @@ from .utils import get_tokens_for_user, get_drf_user_token
 from rest_framework.response import  Response
 from rest_framework import permissions, generics, status
 
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
+from django.contrib.gis.geos import Point
 
 
 
@@ -30,13 +31,16 @@ class PhotoSerializer(serializers.ModelSerializer):
 class PhotoLocalizationSerializer(GeoFeatureModelSerializer):
     """ A class to serialize locations as GeoJSON compatible data """
 
+    #geom = GeometrySerializerMethodField
+
+
     class Meta:
         model = Photo
-        geo_field = "geom"
+        geo_field = 'geom'
 
         # you can also explicitly declare which fields you want to include
         # as with a ModelSerializer.
-        fields = ('title', 'description', 'created_date', 'image', 'user', 'album')
+        fields = ('image',)
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
