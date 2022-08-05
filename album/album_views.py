@@ -92,7 +92,7 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
     def list(self, request):
 
         data_list = []
-        for photo in Photo.objects.all():
+        for photo in Photo.objects.exclude(geom__isnull = True):
 
             json = {
               "type": "Feature",
