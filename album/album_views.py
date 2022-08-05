@@ -96,7 +96,11 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
 
             json = {
               "type": "Feature",
-              "properties": {},
+              "properties": {
+                'photo': str(photo.image),
+                'description': photo.description,
+                'album': str(photo.album)
+              },
               "geometry": photo.geom,
             }
             data_list.append(json)
