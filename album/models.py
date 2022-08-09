@@ -62,6 +62,16 @@ class Photo(models.Model):
         return self.title
 
 
+class Contact(models.Model):
+    """Model for contact form"""
+    name = models.TextField(null=True, blank=True)
+    email = models.TextField(null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
 
 
 # User Models for app register

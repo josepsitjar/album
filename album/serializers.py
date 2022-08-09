@@ -1,4 +1,4 @@
-from album.models import Photo, Person, Album, User
+from album.models import Photo, Person, Album, User, Contact
 from rest_framework import serializers
 from django.contrib.auth import authenticate, login
 from .utils import get_tokens_for_user, get_drf_user_token
@@ -41,6 +41,24 @@ class PhotoLocalizationSerializer(GeoFeatureModelSerializer):
         # you can also explicitly declare which fields you want to include
         # as with a ModelSerializer.
         fields = ('image',)
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    """Class to serialize contact"""
+
+    class Meta:
+        model = Contact
+        fields = ['name', 'email', 'address', 'message']
+
+    def save(self):
+        contact = Contact(name=self.validated_data['name'],
+                          email=self.validated_data['email'],
+                          message=self.validated_data['message'],
+                          address=self.validated_data['address']
+                          )
+
+        contact.save()
+        return contact
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

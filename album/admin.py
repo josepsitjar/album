@@ -8,7 +8,7 @@ from django import forms
 
 from leaflet.admin import LeafletGeoAdmin
 
-from .models import Album, Photo, Person, User
+from .models import Album, Photo, Person, User, Contact
 from .forms import UserCreationForm, UserChangeForm
 
 # Admin for user registrations
@@ -39,3 +39,4 @@ admin.site.register(Album)
 admin.site.register(Person)
 admin.site.register(Photo, LeafletGeoAdmin)
 admin.site.register(User, UserAdmin)
+admin.site.register(Contact)

@@ -185,3 +185,22 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 """
+
+# EMIAL SENDER CONFIG
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'josepsitjar@gmail.com'
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'Nom <adreca@mapa.org>'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_NEWS = True
+EMAIL_UPDATES = True
+EMAIL_CREATE_TEMPLATE = ('<p>Hola admin,</p>'
+                         '<p>L\'usuari <strong>{user}</strong> ha afegit una nova organització:</p>'
+                         '<ul><li><label>Nom:</label> {org_name}</li>'
+                         '</ul>')
+EMAIL_UPDATE_TEMPLATE = ('<p>Hola admin,</p>'
+                         '<p>L\'usuari <strong>{user}</strong> ha modificat la següent organització:</p>'
+                         '<ul><li><label>Nom:</label> {org_name}</li>'
+                         '</ul>')

@@ -1,11 +1,14 @@
 from django.shortcuts import render
 
+from django.core.mail import EmailMessage
+from django.core.mail import send_mail
+
 from album.models import Photo, Album
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import permissions, generics, status
 from rest_framework.permissions import IsAuthenticated
-from album.serializers import PhotoSerializer, AlbumSerializer, PhotoLocalizationSerializer
+from album.serializers import PhotoSerializer, AlbumSerializer, PhotoLocalizationSerializer, ContactSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.renderers import JSONRenderer
@@ -29,11 +32,11 @@ from .serializers import RegistrationSerializer, PasswordChangeSerializer, Login
 # Create your views here.
 
 """
-**************************
-*                        *
-*   Vies for album       *
-*                        *
-**************************
+***************************
+*                         *
+*   Views for album       *
+*                         *
+***************************
 """
 
 
@@ -119,6 +122,36 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
         }
         return Response(content)
 
+
+"""
+*****************************
+*                           *
+*   Views for contact usr   *
+*                           *
+*****************************
+"""
+
+class ContactViewSet(APIView):
+    def post(self, request):
+        serializer = ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            # send email form data
+            email_sender = request.data['email']
+            content = request.data['message']
+
+            send_mail(
+                'Email from picbox',
+                content,
+                email_sender,
+                ['josepsitjar@gmail.com'],
+                fail_silently=False,
+            )
+
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
