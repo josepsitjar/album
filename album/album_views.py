@@ -92,6 +92,8 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
 
     permission_classes = [IsAuthenticated]
 
+    filterset_fields = ['id', 'user']
+
     def list(self, request):
 
         data_list = []
