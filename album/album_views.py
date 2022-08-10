@@ -92,12 +92,13 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
 
     permission_classes = [IsAuthenticated]
 
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user']
 
     def list(self, request):
 
         data_list = []
-        for photo in Photo.objects.exclude(geom__isnull = True):
+        for photo in Photo.objects.exclude(geom__isnull = True).filter(user=request.user):
 
             json = {
               "type": "Feature",
