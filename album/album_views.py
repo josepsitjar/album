@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.core.mail import EmailMessage
 from django.core.mail import send_mail
 
-from album.models import Photo, Album
+from album.models import Photo, Album, User
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import permissions, generics, status
@@ -66,6 +66,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows photos to be viewed or edited.
     """
+    # https://ilovedjango.com/django/rest-api-framework/views/tips/sub/modelviewset-django-rest-framework/
 
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
@@ -84,7 +85,29 @@ class PhotoViewSet(viewsets.ModelViewSet):
         }
         return Response(content)
 
+    def create(self, request, *args, **kwargs):
+        """Create photo object"""
+        
+        user = request.user
+        data = {
+            "title": request.data['title'],
+            "description": request.data['description'],
+            #"created_date": request.data['created_date'],
+            #"geom": request.data['geom'],
+            "image": request.data['image'],
+            "user": user.id
+            #"album": request.data['album'],
+        }
+        print(data)
+        serializer = self.serializer_class(data=data, context={'user': user})
+        print(serializer)
 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 
 class PhotoLocalizationViewSet(viewsets.ViewSet):
 
@@ -126,6 +149,7 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
         return Response(content)
 
 
+
 """
 *****************************
 *                           *
@@ -135,6 +159,8 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
 """
 
 class ContactViewSet(APIView):
+    """ View for user contact"""
+
     def post(self, request):
         serializer = ContactSerializer(data=request.data)
         if serializer.is_valid():
@@ -168,6 +194,8 @@ class ContactViewSet(APIView):
 
 
 class RegistrationView(APIView):
+    """ View for user registration """
+
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
@@ -177,6 +205,8 @@ class RegistrationView(APIView):
 
 
 class LoginView(APIView):
+    """ View for user login """
+
     def post(self, request):
 
         serializer = LoginSerializer(data=request.data)

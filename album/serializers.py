@@ -23,6 +23,16 @@ class AlbumSerializer(serializers.ModelSerializer):
 class PhotoSerializer(serializers.ModelSerializer):
     """class to serialize photo"""
 
+    def save(self):
+        """Create Photo object"""
+        photo = Photo(title = self.validated_data['title'],
+                      description = self.validated_data['description'],
+                      user = User.objects.filter(id=self.validated_data['user'].id)[0],
+                      image = self.validated_data['image']
+                      )
+        photo.save()
+        return photo
+
     class Meta:
         model = Photo
         fields = ['title', 'description', 'created_date', 'geom', 'image', 'user', 'album']
@@ -46,10 +56,6 @@ class PhotoLocalizationSerializer(GeoFeatureModelSerializer):
 class ContactSerializer(serializers.ModelSerializer):
     """Class to serialize contact"""
 
-    class Meta:
-        model = Contact
-        fields = ['name', 'email', 'address', 'message']
-
     def save(self):
         contact = Contact(name=self.validated_data['name'],
                           email=self.validated_data['email'],
@@ -59,6 +65,10 @@ class ContactSerializer(serializers.ModelSerializer):
 
         contact.save()
         return contact
+
+    class Meta:
+        model = Contact
+        fields = ['name', 'email', 'address', 'message']
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
