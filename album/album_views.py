@@ -87,20 +87,23 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create photo object"""
-        
+              
         user = request.user
+        album = Album.objects.filter(title=request.data['album'])[0]
+        
         data = {
             "title": request.data['title'],
-            "description": request.data['description'],
+            "album": album.id,
+            #"alb_name": request.data['album'],
+            #"description": request.data['description'],
             #"created_date": request.data['created_date'],
             #"geom": request.data['geom'],
             "image": request.data['image'],
-            "user": user.id
-            #"album": request.data['album'],
+            "user": user.id, 
         }
         print(data)
         serializer = self.serializer_class(data=data, context={'user': user})
-        print(serializer)
+        
 
         if serializer.is_valid():
             serializer.save()

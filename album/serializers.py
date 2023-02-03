@@ -25,12 +25,15 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     def save(self):
         """Create Photo object"""
+    
         photo = Photo(title = self.validated_data['title'],
-                      description = self.validated_data['description'],
                       user = User.objects.filter(id=self.validated_data['user'].id)[0],
-                      image = self.validated_data['image']
+                      image = self.validated_data['image'], 
+                      #album = Album.objects.filter(title=self.validated_data['album'])[0]
+                      album = self.validated_data['album']
                       )
         photo.save()
+        
         return photo
 
     class Meta:
