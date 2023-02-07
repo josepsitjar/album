@@ -101,8 +101,10 @@ class PhotoViewSet(viewsets.ModelViewSet):
             "image": request.data['image'],
             "user": user.id, 
         }
-        print(data)
-        serializer = self.serializer_class(data=data, context={'user': user})
+        
+        # For now, allow only create photos to staff members 
+        if user.is_staff:
+            serializer = self.serializer_class(data=data, context={'user': user})
         
 
         if serializer.is_valid():
