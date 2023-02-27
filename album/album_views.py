@@ -117,17 +117,20 @@ class PhotoViewSet(viewsets.ModelViewSet):
                 "raw",
             )
 
+            print(image)
 
-            name = settings.MEDIA_ROOT + 'images/user_4/' +str(request.data['image']).split('.')[0] + '.png'
-            
+            #name = settings.MEDIA_ROOT +str(request.data['image']).split('.')[0] + '.png'
+            name = '/tmp/' +str(request.data['image']).split('.')[0] + '.png'
             #image.save("picture_name1.png", format("png"))
-            #img_field = ImageFile(open("picture_name1.png", "rb"))  
-            
+            #img_field = ImageFile(open("picture_name1.png", "rb")) 
+             
             image.save(name, format("png"))
             img_field = ImageFile(open(name, "rb"))
+
         
         else:
             img_field = request.data['image']
+            
 
         data = {
             "title": request.data['title'],
