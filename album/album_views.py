@@ -113,6 +113,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         """If image is in heic format"""
         if str(request.data['image']).split('.')[-1] == 'HEIC':
 
+            """
             heif_file = pillow_heif.read_heif(request.data['image'])
             image = Image.frombytes(
                 heif_file.mode,
@@ -120,8 +121,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
                 heif_file.data,
                 "raw",
             )
-
             print(image)
+            """
 
             #name = settings.MEDIA_ROOT +str(request.data['image']).split('.')[0] + '.png'
             """
