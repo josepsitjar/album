@@ -35,7 +35,6 @@ from .serializers import RegistrationSerializer, PasswordChangeSerializer, Login
 
 from PIL import Image
 import numpy as np
-import cv2
 import pillow_heif
 from pillow_heif import register_heif_opener
 
