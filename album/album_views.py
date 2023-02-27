@@ -12,6 +12,8 @@ from album.serializers import PhotoSerializer, AlbumSerializer, PhotoLocalizatio
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.renderers import JSONRenderer
+import os
+import io
 #from rest_framework import filters
 
 from rest_framework_gis.filters import InBBoxFilter
@@ -27,6 +29,18 @@ from .utils import get_tokens_for_user, get_drf_user_token
 from rest_framework.authtoken.models import Token
 
 from .serializers import RegistrationSerializer, PasswordChangeSerializer, LoginSerializer
+
+
+# Pillow 
+
+from PIL import Image
+import numpy as np
+import cv2
+import pillow_heif
+from pillow_heif import register_heif_opener
+
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.images import ImageFile
 
 
 # Create your views here.
@@ -90,7 +104,27 @@ class PhotoViewSet(viewsets.ModelViewSet):
               
         user = request.user
         album = Album.objects.filter(title=request.data['album'])[0]
-        
+
+        """If image is in heic format"""
+        if str(request.data['image']).split('.')[-1] == 'HEIC':
+
+            heif_file = pillow_heif.read_heif(request.data['image'])
+            image = Image.frombytes(
+                heif_file.mode,
+                heif_file.size,
+                heif_file.data,
+                "raw",
+            )
+
+
+            name = str(request.data['image']).split('.')[0] + '.png'
+            print(name)
+            #image.save("picture_name1.png", format("png"))
+            #img_field = ImageFile(open("picture_name1.png", "rb"))  
+            image.save(name, format("png"))
+            img_field = ImageFile(open(name, "rb"))
+           
+
         data = {
             "title": request.data['title'],
             "album": album.id,
@@ -98,9 +132,12 @@ class PhotoViewSet(viewsets.ModelViewSet):
             #"description": request.data['description'],
             #"created_date": request.data['created_date'],
             #"geom": request.data['geom'],
-            "image": request.data['image'],
+            #"image": request.data['image'],
+            "image": img_field,
+            #"image": 'https://www.unigis.es/wp-content/uploads/2019/05/home5.jpg',
             "user": user.id, 
         }
+
         
         # For now, allow only create photos to staff members 
         if user.is_staff:
@@ -109,6 +146,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             serializer.save()
+            if str(request.data['image']).split('.')[-1] == 'HEIC':
+                os.remove(name)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)

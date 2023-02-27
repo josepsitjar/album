@@ -25,7 +25,8 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     def save(self):
         """Create Photo object"""
-    
+
+        
         photo = Photo(title = self.validated_data['title'],
                       user = User.objects.filter(id=self.validated_data['user'].id)[0],
                       image = self.validated_data['image'], 
