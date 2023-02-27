@@ -40,6 +40,8 @@ from .serializers import RegistrationSerializer, PasswordChangeSerializer, Login
 from PIL import Image
 import numpy as np
 import pillow_heif
+import cv2
+import pi_heif
 from pillow_heif import register_heif_opener
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -122,9 +124,17 @@ class PhotoViewSet(viewsets.ModelViewSet):
             print(image)
 
             #name = settings.MEDIA_ROOT +str(request.data['image']).split('.')[0] + '.png'
+            """
             name = '/var/www/html/files/' +str(request.data['image']).split('.')[0] + '.png'
             image.save(name, format("png"))
             img_field = ImageFile(open(name, "rb"))
+            """
+            name = '/var/www/html/files/' +str(request.data['image']).split('.')[0] + '.png'
+            heif_file = pi_heif.open_heif(request.data['image'], convert_hdr_to_8bit=False, bgr_mode=True)
+            np_array = np.asarray(heif_file)
+            cv2.imwrite(name, np_array)
+            img_field = ImageFile(open(name, "rb"))
+            
         
         else:
             img_field = request.data['image']
