@@ -34,3 +34,12 @@ http  http://127.0.0.1:8000/photos/ 'Authorization: Token e49e4f2f7ee1f950d5ee4d
 
 curl -X GET http://127.0.0.1:8000/photos/ -H 'Authorization: Token a3f6d0c4533cef47863069cbc89974ff4c2ae9b3'
 curl -H 'Accept: application/json; indent=4' -u elna@udg.edu:josep0191 http://127.0.0.1:8000/photos/
+
+# Upload heif files
+To allow uplod this files, is necessary to use pillow heif: https://pypi.org/project/pillow-heif/
+Also install dependencies on sistem:
+- pip3 install opencv-python
+- apt-get install libgl1
+
+The files will be uploaded temporally on a folder /var/www/html/files with permisions:
+chmod -R josepsitjar:www-data files

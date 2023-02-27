@@ -162,8 +162,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             serializer.save()
-            #if str(request.data['image']).split('.')[-1] == 'HEIC':
-            #    os.remove(name)
+            if str(request.data['image']).split('.')[-1] == 'HEIC':
+                os.remove(name)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
