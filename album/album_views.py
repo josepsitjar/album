@@ -122,7 +122,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
             print(image)
 
             #name = settings.MEDIA_ROOT +str(request.data['image']).split('.')[0] + '.png'
-            name = '/var/www/html/' +str(request.data['image']).split('.')[0] + '.png'
+            name = '/var/www/html/files/' +str(request.data['image']).split('.')[0] + '.png'
             image.save(name, format("png"))
             img_field = ImageFile(open(name, "rb"))
         
