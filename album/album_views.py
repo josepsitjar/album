@@ -116,7 +116,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
             )
 
 
-            name = str(request.data['image']).split('.')[0] + '.png'
+            name = 'tmp/' +str(request.data['image']).split('.')[0] + '.png'
             print(name)
             #image.save("picture_name1.png", format("png"))
             #img_field = ImageFile(open("picture_name1.png", "rb"))  
