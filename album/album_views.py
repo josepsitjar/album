@@ -122,7 +122,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
             #img_field = ImageFile(open("picture_name1.png", "rb"))  
             image.save(name, format("png"))
             img_field = ImageFile(open(name, "rb"))
-           
+        
+        else:
+            img_field = request.data['image']
 
         data = {
             "title": request.data['title'],
