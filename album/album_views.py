@@ -29,6 +29,8 @@ from rest_framework.response import  Response
 from rest_framework.views import APIView
 from .utils import get_tokens_for_user, get_drf_user_token
 from rest_framework.authtoken.models import Token
+from django.core.files.storage import FileSystemStorage
+
 
 from .serializers import RegistrationSerializer, PasswordChangeSerializer, LoginSerializer
 
@@ -120,13 +122,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
             print(image)
 
             #name = settings.MEDIA_ROOT +str(request.data['image']).split('.')[0] + '.png'
-            name = '/tmp/' +str(request.data['image']).split('.')[0] + '.png'
-            #image.save("picture_name1.png", format("png"))
-            #img_field = ImageFile(open("picture_name1.png", "rb")) 
-             
+            name = '/var/www/html/' +str(request.data['image']).split('.')[0] + '.png'
             image.save(name, format("png"))
             img_field = ImageFile(open(name, "rb"))
-
         
         else:
             img_field = request.data['image']
