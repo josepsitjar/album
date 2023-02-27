@@ -15,6 +15,7 @@ from rest_framework.renderers import JSONRenderer
 import os
 import io
 from django.conf import settings
+from .utils import user_directory_path
 #from rest_framework import filters
 
 from rest_framework_gis.filters import InBBoxFilter
@@ -117,10 +118,11 @@ class PhotoViewSet(viewsets.ModelViewSet):
             )
 
 
-            name = settings.MEDIA_ROOT + 'images/' +str(request.data['image']).split('.')[0] + '.png'
-            print(name)
+            name = settings.MEDIA_ROOT + 'images/user_4/' +str(request.data['image']).split('.')[0] + '.png'
+            
             #image.save("picture_name1.png", format("png"))
             #img_field = ImageFile(open("picture_name1.png", "rb"))  
+            
             image.save(name, format("png"))
             img_field = ImageFile(open(name, "rb"))
         
