@@ -113,28 +113,13 @@ class PhotoViewSet(viewsets.ModelViewSet):
         """If image is in heic format"""
         if str(request.data['image']).split('.')[-1] == 'HEIC':
 
-            """
-            heif_file = pillow_heif.read_heif(request.data['image'])
-            image = Image.frombytes(
-                heif_file.mode,
-                heif_file.size,
-                heif_file.data,
-                "raw",
-            )
-            print(image)
-            """
-
-            #name = settings.MEDIA_ROOT +str(request.data['image']).split('.')[0] + '.png'
-            """
-            name = '/var/www/html/files/' +str(request.data['image']).split('.')[0] + '.png'
-            image.save(name, format("png"))
-            img_field = ImageFile(open(name, "rb"))
-            """
-            name = '/var/www/html/files/' +str(request.data['image']).split('.')[0] + '.png'
+            #name = '/var/www/html/files/' +str(request.data['image']).split('.')[0] + '.png'
+            name = str(request.data['image']).split('.')[0] + '.jpg'
             heif_file = pi_heif.open_heif(request.data['image'], convert_hdr_to_8bit=False, bgr_mode=True)
             np_array = np.asarray(heif_file)
-            cv2.imwrite(name, np_array)
+            cv2.imwrite(name, np_array, [int(cv2.IMWRITE_PNG_COMPRESSION),9])
             img_field = ImageFile(open(name, "rb"))
+            #compresss image https://machinelearningknowledge.ai/tips-and-tricks-of-opencv-cv2-imwrite-that-nobody-told-you/?utm_content=cmp-true
             
         
         else:
