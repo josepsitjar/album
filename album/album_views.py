@@ -119,7 +119,12 @@ class PhotoViewSet(viewsets.ModelViewSet):
             heif_file = pi_heif.open_heif(request.data['image'], convert_hdr_to_8bit=False, bgr_mode=True)
             np_array = np.asarray(heif_file)
             cv2.imwrite(name, np_array, [int(cv2.IMWRITE_PNG_COMPRESSION),9])
-            img_field = ImageFile(open(name, "rb"))
+
+            # moving file
+            new_folder = 'user_' + str(request.user.id) + str(request.data['image']).split('.')[0] + '.jpg'
+            shutil.copyfile(name, new_folder )
+
+            img_field = ImageFile(open(new_folder, "rb"))
             #compresss image https://machinelearningknowledge.ai/tips-and-tricks-of-opencv-cv2-imwrite-that-nobody-told-you/?utm_content=cmp-true
             
         
