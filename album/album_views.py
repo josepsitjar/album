@@ -13,6 +13,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.renderers import JSONRenderer
 import os
+import shutil
 import io
 from django.conf import settings
 from .utils import user_directory_path
@@ -113,7 +114,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         """If image is in heic format"""
         if str(request.data['image']).split('.')[-1] == 'HEIC':
 
-            #name = '/var/www/html/files/' +str(request.data['image']).split('.')[0] + '.png'
+            #name = '/var/www/html/files/' +str(request.data['image']).split('.')[0] + '.jpg'
             name = str(request.data['image']).split('.')[0] + '.jpg'
             heif_file = pi_heif.open_heif(request.data['image'], convert_hdr_to_8bit=False, bgr_mode=True)
             np_array = np.asarray(heif_file)
@@ -148,7 +149,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             if str(request.data['image']).split('.')[-1] == 'HEIC':
+                print(name)
                 os.remove(name)
+                #shutil.rmtree('/var/www/html/files/')
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
