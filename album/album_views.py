@@ -114,8 +114,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
         """If image is in heic format"""
         if str(request.data['image']).split('.')[-1] == 'HEIC':
 
-            #name = '/var/www/html/files/' +str(request.data['image']).split('.')[0] + '.jpg'
-            name = str(request.data['image']).split('.')[0] + '.jpg'
+            name = '/var/www/html/files/' +str(request.data['image']).split('.')[0] + '.jpg'
+            #name = str(request.data['image']).split('.')[0] + '.jpg'
             heif_file = pi_heif.open_heif(request.data['image'], convert_hdr_to_8bit=False, bgr_mode=True)
             np_array = np.asarray(heif_file)
             cv2.imwrite(name, np_array, [int(cv2.IMWRITE_PNG_COMPRESSION),9])
@@ -149,7 +149,6 @@ class PhotoViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             if str(request.data['image']).split('.')[-1] == 'HEIC':
-                print(name)
                 os.remove(name)
                 #shutil.rmtree('/var/www/html/files/')
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
