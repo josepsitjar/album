@@ -8,6 +8,7 @@ from rest_framework import permissions, generics, status
 from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
 from django.contrib.gis.geos import Point
 
+from PIL import Image
 
 
 class AlbumSerializer(serializers.ModelSerializer):
@@ -25,14 +26,31 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     def save(self):
         """Create Photo object"""
-
         
         photo = Photo(title = self.validated_data['title'],
                       user = User.objects.filter(id=self.validated_data['user'].id)[0],
                       image = self.validated_data['image'], 
+                      geom = self.validated_data['geom'],
                       #album = Album.objects.filter(title=self.validated_data['album'])[0]
                       album = self.validated_data['album']
                       )
+        # Check if image has exif 
+        exif = Image.open(self.validated_data['image'])._getexif()
+        if exif is not None:
+            try:
+                for key, value in exif.items():
+                    if key == 34853:
+                        x_decimal = float(value[2][0]) + float(value[2][1])/60 + float(value[2][2])/(60*60)
+                        if value[1] == 'S':
+                            x_decimal * -1
+                        y_decimal = float(value[4][0]) + float(value[4][1])/60 + float(value[4][2])/(60*60)
+                        if value[3] == 'W':
+                            y_decimal * -1
+                        geom = {'type': 'Point', 'coordinates': [y_decimal,x_decimal]} 
+                        photo.geom = geom
+            except:
+                pass
+        
         photo.save()
         
         return photo

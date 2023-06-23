@@ -33,17 +33,20 @@ from rest_framework.authtoken.models import Token
 from django.core.files.storage import FileSystemStorage
 
 
+
 from .serializers import RegistrationSerializer, PasswordChangeSerializer, LoginSerializer
 
 
 # Pillow 
-
 from PIL import Image
+from PIL.ExifTags import TAGS, GPSTAGS
 import numpy as np
 import pillow_heif
 import cv2
 import pi_heif
 from pillow_heif import register_heif_opener
+# Exif
+#from exif import Image
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.files.images import ImageFile
@@ -110,7 +113,10 @@ class PhotoViewSet(viewsets.ModelViewSet):
               
         user = request.user
         album = Album.objects.filter(title=request.data['album'])[0]
+        geom = 'null'
 
+
+       
         """If image is in heic format"""
         if str(request.data['image']).split('.')[-1] == 'HEIC':
 
@@ -121,12 +127,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
             cv2.imwrite(name, np_array, [int(cv2.IMWRITE_PNG_COMPRESSION),9])
 
             img_field = ImageFile(open(name, "rb"))
-            #compresss image https://machinelearningknowledge.ai/tips-and-tricks-of-opencv-cv2-imwrite-that-nobody-told-you/?utm_content=cmp-true
             
-        
         else:
             img_field = request.data['image']
-            
 
         data = {
             "title": request.data['title'],
@@ -135,12 +138,15 @@ class PhotoViewSet(viewsets.ModelViewSet):
             #"description": request.data['description'],
             #"created_date": request.data['created_date'],
             #"geom": request.data['geom'],
+            #"geom": {'type': 'Point', 'coordinates': [0,0]},
+            "geom": geom,
             #"image": request.data['image'],
             "image": img_field,
             #"image": 'https://www.unigis.es/wp-content/uploads/2019/05/home5.jpg',
             "user": user.id, 
         }
 
+        
         
         # For now, allow only create photos to staff members 
         if user.is_staff:
