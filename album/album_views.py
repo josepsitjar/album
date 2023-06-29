@@ -134,6 +134,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         data = {
             "title": request.data['title'],
             "album": album.id,
+            "description": request.data['description'],
             #"alb_name": request.data['album'],
             #"description": request.data['description'],
             #"created_date": request.data['created_date'],

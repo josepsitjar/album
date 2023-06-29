@@ -31,6 +31,7 @@ class PhotoSerializer(serializers.ModelSerializer):
                       user = User.objects.filter(id=self.validated_data['user'].id)[0],
                       image = self.validated_data['image'], 
                       geom = self.validated_data['geom'],
+                      description = self.validated_data['description'],
                       #album = Album.objects.filter(title=self.validated_data['album'])[0]
                       album = self.validated_data['album']
                       )
