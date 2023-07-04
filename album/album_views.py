@@ -71,17 +71,29 @@ class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
     permission_classes = [IsAuthenticated]
-    #permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user']
 
-    def get(self, request, format=None):
-        content = {
-            'user': str(request.user),  # `django.contrib.auth.User` instance.
-            'auth': str(request.auth),  # None
-        }
-        return Response(content)
+    
+    def list(self, request, format=None):
+        
+        
+        user = User.objects.filter(id=request.user.id)[0]
+        
+        """
+        Staff users can view all it's own albums 
+        Other users, with no permissions to access django admin, only the selected albums
+        The filter by user is also done on the frontend
+        """
+        if user.is_staff:
+            queryset = Album.objects.all()
+        else: 
+            queryset = user.albums.all()
+
+        serializer_class = AlbumSerializer(queryset, many=True)
+  
+        return Response(serializer_class.data)
 
 
 
@@ -89,24 +101,37 @@ class PhotoViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows photos to be viewed or edited.
     """
-    # https://ilovedjango.com/django/rest-api-framework/views/tips/sub/modelviewset-django-rest-framework/
-
+   
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
     permission_classes = [IsAuthenticated]
-    #authentication_classes = [SessionAuthentication, BasicAuthentication]
 
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user', 'album']
-    #search_fields = ['user']
+    
+    def list(self, request, format=None):
 
-    def get(self, request, format=None):
-        content = {
-            'user': str(request.user),  # `django.contrib.auth.User` instance.
-            'auth': str(request.auth),  # None
-        }
-        return Response(content)
+        user = User.objects.filter(id=request.user.id)[0]
+
+        """
+        Staff users can view all it's own albums 
+        Other users, with no permissions to access django admin, only the selected albums
+        The filter by user is also done on the frontend
+        """
+        if user.is_staff:
+            albums = Album.objects.all()
+        else:
+            albums = user.albums.all()
+        
+        if request.query_params['album'] == 'all':
+            queryset = Photo.objects.filter(album__in = albums)
+        else:
+            queryset = Photo.objects.filter(album__id = request.query_params['album'])
+
+        serializer_class = PhotoSerializer(queryset, many=True)
+  
+        return Response(serializer_class.data)
 
     def create(self, request, *args, **kwargs):
         """Create photo object"""
