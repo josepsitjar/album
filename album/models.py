@@ -6,6 +6,7 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin, User, AbstractUser
 )
 from django.utils import timezone
+from django.dispatch import receiver
 
 from django.db import models
 from django.db.models.signals import post_save
@@ -61,6 +62,18 @@ class Photo(models.Model):
     def __str__(self):
         return self.title
 
+
+# delte files on delete Photo instance
+@receiver(models.signals.post_delete, sender=Photo)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Delete files from filesistem
+    """
+
+    try:
+        instance.image.delete(save=False)
+    except:
+        pass
 
 class Contact(models.Model):
     """Model for contact form"""
