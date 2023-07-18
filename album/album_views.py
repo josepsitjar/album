@@ -201,8 +201,8 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
     def list(self, request):
 
         data_list = []
-        for photo in Photo.objects.exclude(geom__isnull = True).filter(user=request.user):
-
+        for photo in Photo.objects.exclude(geom = 'null').filter(user=request.user):
+            
             json = {
               "type": "Feature",
               "properties": {
