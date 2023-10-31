@@ -58,7 +58,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ['title', 'description', 'created_date', 'geom', 'image', 'user', 'album']
+        fields = ['title', 'description', 'created_date', 'geom', 'image', 'user', 'album', 'pk']
 
 
 class PhotoLocalizationSerializer(GeoFeatureModelSerializer):

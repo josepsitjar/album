@@ -140,8 +140,6 @@ class PhotoViewSet(viewsets.ModelViewSet):
         album = Album.objects.filter(title=request.data['album'])[0]
         geom = 'null'
 
-
-       
         """If image is in heic format"""
         if str(request.data['image']).split('.')[-1] == 'HEIC':
 
@@ -173,7 +171,6 @@ class PhotoViewSet(viewsets.ModelViewSet):
         }
 
         
-        
         # For now, allow only create photos to staff members 
         if user.is_staff:
             serializer = self.serializer_class(data=data, context={'user': user})
@@ -187,6 +184,17 @@ class PhotoViewSet(viewsets.ModelViewSet):
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        print('destroy action programmed')
+        print(request)
+        print(request.data['pk'])
+
+        id = request.data['pk']
+        image = Photo.objects.filter(pk=id)
+        image.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
         
 
 class PhotoLocalizationViewSet(viewsets.ViewSet):
