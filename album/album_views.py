@@ -186,10 +186,17 @@ class PhotoViewSet(viewsets.ModelViewSet):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
-        
-        id = request.data['pk']
-        image = Photo.objects.filter(pk=id)
-        image.delete()
+
+        user = User.objects.filter(id=request.user.id)[0]
+        """
+        Only staff users can delete images 
+        """
+        if user.is_staff:
+            id = request.data['pk']
+            image = Photo.objects.filter(pk=id)
+            image.delete()
+        else:
+            pass 
 
         return Response(status=status.HTTP_204_NO_CONTENT)
         
