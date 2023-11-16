@@ -186,10 +186,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, pk=None):
-        print('destroy action programmed')
-        print(request)
-        print(request.data['pk'])
-
+        
         id = request.data['pk']
         image = Photo.objects.filter(pk=id)
         image.delete()

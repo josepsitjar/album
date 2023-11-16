@@ -69,7 +69,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     """
     Delete files from filesistem
     """
-
+    instance.image.delete()
     try:
         instance.image.delete(save=False)
     except:
