@@ -43,8 +43,6 @@ class Person(models.Model):
         return self.name
 
 
-
-
 class Photo(models.Model):
     """Model for photos"""
 

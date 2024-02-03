@@ -16,6 +16,17 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     photos = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
+    def save(self):
+        """Create Album object"""
+
+        album = Album(title = self.validated_data['title'],
+                      description = self.validated_data['description'],
+                      image = self.validated_data['image'], 
+                      user = User.objects.filter(id=self.validated_data['user'].id)[0])
+        
+        album.save()
+        return album
+
     class Meta:
         model = Album
         fields = ['title', 'description', 'photos', 'user', 'image', 'pk']
