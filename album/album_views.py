@@ -95,7 +95,29 @@ class AlbumViewSet(viewsets.ModelViewSet):
   
         return Response(serializer_class.data)
 
+    def create(self, request, *args, **kwargs):
+        """Create photo object"""
+              
+        user = request.user
+        
+        data = {
+            "title": request.data['title'],
+            "description": request.data['description'],
+            "image": request.data['image'],
+            "user": user.id, 
+        }
 
+        
+        # For now, allow only create photos to staff members 
+        if user.is_staff:
+            serializer = self.serializer_class(data=data, context={'user': user})
+        
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PhotoViewSet(viewsets.ModelViewSet):
     """

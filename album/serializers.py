@@ -18,7 +18,6 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     def save(self):
         """Create Album object"""
-
         album = Album(title = self.validated_data['title'],
                       description = self.validated_data['description'],
                       image = self.validated_data['image'], 
