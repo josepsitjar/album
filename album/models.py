@@ -61,18 +61,6 @@ class Photo(models.Model):
         return self.title
 
 
-# delte files on delete Photo instance
-@receiver(models.signals.post_delete, sender=Photo)
-def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Delete files from filesistem
-    """
-    instance.image.delete()
-    try:
-        instance.image.delete(save=False)
-    except:
-        pass
-
 class Contact(models.Model):
     """Model for contact form"""
     name = models.TextField(null=True, blank=True)
@@ -99,3 +87,29 @@ class User(AbstractUser):
     location = models.CharField(max_length=30, blank=True, null=True)
     birth_date = models.DateField(null=True, blank=True)
     albums = models.ManyToManyField(Album, blank=True, related_name='albums_user')
+
+
+
+# delte files on delete Photo instance
+@receiver(models.signals.post_delete, sender=Photo)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Delete files from filesistem
+    """
+    instance.image.delete()
+    try:
+        instance.image.delete(save=False)
+    except:
+        pass
+
+# delte files on delete Album instance
+@receiver(models.signals.post_delete, sender=Album)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Delete files from filesistem
+    """
+    instance.image.delete()
+    try:
+        instance.image.delete(save=False)
+    except:
+        pass

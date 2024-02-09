@@ -108,7 +108,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
         }
 
         
-        # For now, allow only create photos to staff members 
+        # For now, allow only create albums to staff members 
         if user.is_staff:
             serializer = self.serializer_class(data=data, context={'user': user})
         
@@ -118,6 +118,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 
 class PhotoViewSet(viewsets.ModelViewSet):
     """
