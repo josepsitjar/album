@@ -33,6 +33,18 @@ class Album(models.Model):
     def __str__(self):
         return self.title
 
+# delte files on delete Album instance
+@receiver(models.signals.post_delete, sender=Album)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Delete files from filesistem
+    """
+
+    try:
+        instance.image.delete(save=False)
+    except:
+        pass
+    
 
 class Person(models.Model):
     """Model for Persons in photo"""
@@ -59,6 +71,18 @@ class Photo(models.Model):
 
     def __str__(self):
         return self.title
+
+# delte files on delete Photo instance
+@receiver(models.signals.post_delete, sender=Photo)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Delete files from filesistem
+    """
+    
+    try:
+        instance.image.delete(save=False)
+    except:
+        pass
 
 
 class Contact(models.Model):
@@ -90,26 +114,6 @@ class User(AbstractUser):
 
 
 
-# delte files on delete Photo instance
-@receiver(models.signals.post_delete, sender=Photo)
-def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Delete files from filesistem
-    """
-    instance.image.delete()
-    try:
-        instance.image.delete(save=False)
-    except:
-        pass
 
-# delte files on delete Album instance
-@receiver(models.signals.post_delete, sender=Album)
-def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Delete files from filesistem
-    """
-    instance.image.delete()
-    try:
-        instance.image.delete(save=False)
-    except:
-        pass
+
+

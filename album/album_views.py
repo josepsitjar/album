@@ -98,7 +98,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Create photo object"""
         
-        serializer_class_album_creation = CreateAlbumSerializer
+        serializer_class_album_creation = CreateAlbumSerializer # serializer for album creation. 
 
         user = request.user
         
