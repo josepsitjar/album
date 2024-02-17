@@ -31,6 +31,23 @@ class AlbumSerializer(serializers.ModelSerializer):
         fields = ['title', 'description', 'photos', 'user', 'image', 'pk']
 
 
+class CreateAlbumSerializer(serializers.ModelSerializer):
+    """Class to serialize album creation"""
+    def save(self):
+        """Create Album object"""
+        album = Album(title = self.validated_data['title'],
+                      description = self.validated_data['description'],
+                      image = self.validated_data['image'], 
+                      user = User.objects.filter(id=self.validated_data['user'].id)[0])
+        
+        album.save()
+        return album
+
+    class Meta:
+        model = Album
+        fields = ['title', 'description', 'user', 'image', 'pk']
+
+
 class PhotoSerializer(serializers.ModelSerializer):
     """class to serialize photo"""
 

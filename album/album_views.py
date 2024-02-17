@@ -8,7 +8,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import permissions, generics, status
 from rest_framework.permissions import IsAuthenticated
-from album.serializers import PhotoSerializer, AlbumSerializer, PhotoLocalizationSerializer, ContactSerializer
+from album.serializers import PhotoSerializer, AlbumSerializer, CreateAlbumSerializer, PhotoLocalizationSerializer, ContactSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.renderers import JSONRenderer
@@ -97,7 +97,9 @@ class AlbumViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create photo object"""
-              
+        
+        serializer_class_album_creation = CreateAlbumSerializer
+
         user = request.user
         
         data = {
@@ -110,7 +112,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
         
         # For now, allow only create albums to staff members 
         if user.is_staff:
-            serializer = self.serializer_class(data=data, context={'user': user})
+            serializer = serializer_class_album_creation(data=data, context={'user': user})
         
 
         if serializer.is_valid():
