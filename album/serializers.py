@@ -10,6 +10,8 @@ from django.contrib.gis.geos import Point
 
 from PIL import Image
 
+from datetime import datetime
+
 
 class AlbumSerializer(serializers.ModelSerializer):
     """Class to serialize albums"""
@@ -79,6 +81,9 @@ class PhotoSerializer(serializers.ModelSerializer):
                             y_decimal * -1
                         geom = {'type': 'Point', 'coordinates': [y_decimal,x_decimal]} 
                         photo.geom = geom
+                    if key == 306:
+                        datetime_object = datetime.strptime(value, '%Y:%m:%d %H:%M:%S')
+                        photo.created_date = datetime_object
             except:
                 pass
         

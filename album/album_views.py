@@ -150,9 +150,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
             albums = user.albums.all()
         
         if request.query_params['album'] == 'all':
-            queryset = Photo.objects.filter(album__in = albums)
+            queryset = Photo.objects.filter(album__in = albums).order_by('created_date')
         else:
-            queryset = Photo.objects.filter(album__id = request.query_params['album'])
+            queryset = Photo.objects.filter(album__id = request.query_params['album']).order_by('created_date')
 
         serializer_class = PhotoSerializer(queryset, many=True)
   
