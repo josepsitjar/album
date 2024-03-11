@@ -121,6 +121,21 @@ class AlbumViewSet(viewsets.ModelViewSet):
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+    def destroy(self, request, pk=None):
+
+        user = User.objects.filter(id=request.user.id)[0]
+        """
+        Only staff users can delete images 
+        """
+        if user.is_staff:
+            id = request.data['pk']
+            album = Album.objects.filter(pk=id)
+            album.delete()
+        else:
+            pass 
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        
 
 class PhotoViewSet(viewsets.ModelViewSet):
     """
@@ -150,9 +165,10 @@ class PhotoViewSet(viewsets.ModelViewSet):
             albums = user.albums.all()
         
         if request.query_params['album'] == 'all':
-            queryset = Photo.objects.filter(album__in = albums).order_by('created_date')
+            #queryset = Photo.objects.filter(album__in = albums).order_by('created_date')
+            queryset = Photo.objects.filter(user = user).order_by('-created_date')
         else:
-            queryset = Photo.objects.filter(album__id = request.query_params['album']).order_by('created_date')
+            queryset = Photo.objects.filter(album__id = request.query_params['album']).order_by('-created_date')
 
         serializer_class = PhotoSerializer(queryset, many=True)
   
