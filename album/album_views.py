@@ -31,6 +31,7 @@ from rest_framework.views import APIView
 from .utils import get_tokens_for_user, get_drf_user_token
 from rest_framework.authtoken.models import Token
 from django.core.files.storage import FileSystemStorage
+from django.db.models import Q
 
 
 
@@ -148,7 +149,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['id', 'user', 'album']
+    filterset_fields = ['id', 'user', 'album', 'querytext']
     
     def list(self, request, format=None):
 
@@ -164,9 +165,18 @@ class PhotoViewSet(viewsets.ModelViewSet):
         else:
             albums = user.albums.all()
         
+        # filter content 
+        filter_text = request.query_params['querytext']
+
         if request.query_params['album'] == 'all':
-            #queryset = Photo.objects.filter(album__in = albums).order_by('created_date')
-            queryset = Photo.objects.filter(user = user).order_by('-created_date')
+            
+            if request.query_params['querytext'] == 'null':
+                queryset = Photo.objects.filter(user = user).order_by('-created_date')
+            if request.query_params['querytext'] != 'null':
+                queryset = Photo.objects.filter(Q(user = user, album__description__icontains=filter_text) 
+                                                | Q(user = user, description__icontains=filter_text) 
+                                                ).order_by('-created_date')
+            
         else:
             queryset = Photo.objects.filter(album__id = request.query_params['album']).order_by('-created_date')
 
