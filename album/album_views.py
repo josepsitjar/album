@@ -174,8 +174,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
                 queryset = Photo.objects.filter(user = user).order_by('-created_date').exclude(image__isnull=True)
             if request.query_params['querytext'] != 'null':
                 queryset = Photo.objects.filter(Q(user = user, album__description__icontains=filter_text) 
-                                                | Q(user = user, description__icontains=filter_text, image__isnull=False) 
-                                                ).order_by('-created_date')
+                                                | Q(user = user, description__icontains=filter_text) 
+                                                ).order_by('-created_date').exclude(image='')
             
         else:
             print('query second option')
