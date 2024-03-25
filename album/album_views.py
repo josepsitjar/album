@@ -171,7 +171,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
         if request.query_params['album'] == 'all':
             
             if request.query_params['querytext'] == 'null':
-                queryset = Photo.objects.filter(user = user).order_by('-created_date').exclude(image__isnull=True)
+                queryset = Photo.objects.filter(user = user).order_by('-created_date').exclude(image__exact='')
             if request.query_params['querytext'] != 'null':
                 queryset = Photo.objects.filter(Q(user = user, album__description__icontains=filter_text) 
                                                 | Q(user = user, description__icontains=filter_text) 
@@ -179,7 +179,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
             
         else:
             print('query second option')
-            queryset = Photo.objects.filter(album__id = request.query_params['album']).order_by('-created_date').exclude(image__isnull=True)
+            queryset = Photo.objects.filter(album__id = request.query_params['album']).order_by('-created_date').exclude(image__exact='')
+            
 
         serializer_class = PhotoSerializer(queryset, many=True)
   
