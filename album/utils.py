@@ -37,3 +37,10 @@ def user_directory_path(instance, filename):
                                             file_name[-1])
 
 
+def album_directory_path(instance, filename):
+    """
+    Define the path where uploads will be saved.
+    Model must include user instance.
+    """
+    file_name = filename.split('/')
+    return 'images/user_{0}/"album_front_img"/{1}'.format(instance.user.id, file_name[-1])

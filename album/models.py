@@ -16,7 +16,7 @@ from djgeojson.fields import PointField, GeometryField
 import os
 
 
-from .utils import user_directory_path
+from .utils import user_directory_path, album_directory_path
 from src.storage_bakends import MediaStorage
 
 
@@ -27,7 +27,7 @@ class Album(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
+    image = models.ImageField(upload_to=album_directory_path, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
