@@ -100,7 +100,7 @@ class PhotoLocalizationSerializer(GeoFeatureModelSerializer):
     """ A class to serialize locations as GeoJSON compatible data """
 
     #geom = GeometrySerializerMethodField
-
+    # https://docs.djangoproject.com/en/5.0/ref/contrib/gis/serializers/
 
     class Meta:
         model = Photo
@@ -108,7 +108,7 @@ class PhotoLocalizationSerializer(GeoFeatureModelSerializer):
 
         # you can also explicitly declare which fields you want to include
         # as with a ModelSerializer.
-        fields = ('image', 'user')
+        fields = ['image', 'user', 'geom']
 
 
 class ContactSerializer(serializers.ModelSerializer):

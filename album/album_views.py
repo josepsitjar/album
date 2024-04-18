@@ -257,17 +257,19 @@ class PhotoViewSet(viewsets.ModelViewSet):
 class PhotoLocalizationViewSet(viewsets.ViewSet):
 
     queryset = Photo.objects.exclude(geom__isnull = True)
-
+    serializer_class = PhotoLocalizationSerializer
     permission_classes = [IsAuthenticated]
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['id', 'user']
 
     def list(self, request):
+        queryset_location = Photo.objects.filter(user=request.user).exclude(geom__isnull = True)
 
+
+        """
         data_list = []
         for photo in Photo.objects.exclude(geom = 'null').filter(user=request.user):
-            
             json = {
               "type": "Feature",
               "properties": {
@@ -283,7 +285,13 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
           "type": "FeatureCollection",
           "features": data_list
         }
+
         return Response(featureCollection, status=status.HTTP_200_OK)
+        """
+        
+        serializer_class = PhotoLocalizationSerializer(queryset_location, many=True)
+        return Response(serializer_class.data)
+        
 
 
     def get(self, request, format=None):
