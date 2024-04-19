@@ -23,7 +23,7 @@ from rest_framework_gis.filters import InBBoxFilter
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.response import  Response
@@ -256,7 +256,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
 class PhotoLocalizationViewSet(viewsets.ViewSet):
 
-    queryset = Photo.objects.exclude(geom__isnull = True)
+    queryset = Photo.objects.exclude(geom__isnull = True).exclude(geom__exact='')
     serializer_class = PhotoLocalizationSerializer
     permission_classes = [IsAuthenticated]
 
@@ -264,8 +264,13 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
     filterset_fields = ['id', 'user']
 
     def list(self, request):
-        queryset_location = Photo.objects.filter(user=request.user).exclude(geom__isnull = True)
+        #queryset_location = Photo.objects.filter(user=request.user).exclude(geom__isnull = True)
+        queryset_location = Photo.objects.filter(Q(user = request.user, geom__isnull=False)).exclude(geom__exact='')
 
+        serializer_class = PhotoLocalizationSerializer(queryset_location, many=True)
+
+        #print(serializer_class.data)
+   
 
         """
         data_list = []
@@ -286,11 +291,11 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
           "features": data_list
         }
 
+        print(serializer_class.data)
         return Response(featureCollection, status=status.HTTP_200_OK)
         """
-        
-        serializer_class = PhotoLocalizationSerializer(queryset_location, many=True)
-        return Response(serializer_class.data)
+        #return Response(serializer_class.data)
+        return JsonResponse(serializer_class.data)
         
 
 
