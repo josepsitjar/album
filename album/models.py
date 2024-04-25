@@ -17,7 +17,6 @@ import os
 
 
 from .utils import user_directory_path, album_directory_path
-from src.storage_bakends import MediaStorage
 
 
 # Create your models here.
@@ -65,7 +64,6 @@ class Photo(models.Model):
     album = models.ForeignKey(Album, related_name='photos', on_delete=models.SET_NULL, null=True, blank=True)
     persons = models.ManyToManyField(Person, blank=True)
     image = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
-    #image = models.ImageField(storage=MediaStorage(), upload_to=user_directory_path, null=True, blank=True)
     tags = models.CharField(max_length=4000, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
