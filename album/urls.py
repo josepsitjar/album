@@ -6,15 +6,12 @@ from rest_framework_simplejwt import views as jwt_views
 from rest_framework.authtoken import views
 
 
-from album.album_views import PhotoViewSet, RegistrationView, LoginView, ContactViewSet
+from album.album_views import PhotoViewSet, PhotoSingleViewset, RegistrationView, LoginView, ContactViewSet
 
 router = routers.DefaultRouter()
 router.register(r'photos', album_views.PhotoViewSet)
-# exemple query --> http://127.0.0.1:8000/photos/?user=1   Filtrem per usuari amb id 1
-
-#router.register(r'photos/(?P<photo_pk>\d+)', album_views.PhotoViewSet)
+router.register(r'single_photo', album_views.PhotoSingleViewset)
 router.register(r'albums', album_views.AlbumViewSet)
-
 router.register(r'photosGeojson', album_views.PhotoLocalizationViewSet) # photos geojson feature collection
 
 

@@ -32,7 +32,7 @@ from .utils import get_tokens_for_user, get_drf_user_token
 from rest_framework.authtoken.models import Token
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
-
+from django.core.serializers import serialize
 
 
 from .serializers import RegistrationSerializer, PasswordChangeSerializer, LoginSerializer
@@ -254,6 +254,28 @@ class PhotoViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
         
 
+class PhotoSingleViewset(viewsets.ViewSet):
+    """
+    API endpoint that allows single photo to be viewed or edited.
+    """
+
+    queryset = Photo.objects.all()
+    serializer_class = PhotoSerializer
+    permission_classes = [IsAuthenticated]
+
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['id', 'user', 'album']
+
+    def list(self, request, format=None):
+
+        user = User.objects.filter(id=request.user.id)[0]
+        photo_id = request.query_params['photo_id']
+        print(photo_id)
+        queryset = Photo.objects.filter(pk = photo_id)
+
+        serializer_class = PhotoSerializer(queryset, many=True)
+        return Response(serializer_class.data)
+
 class PhotoLocalizationViewSet(viewsets.ViewSet):
 
     queryset = Photo.objects.exclude(geom__isnull = True).exclude(geom__exact='')
@@ -265,14 +287,9 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
 
     def list(self, request):
         #queryset_location = Photo.objects.filter(user=request.user).exclude(geom__isnull = True)
-        queryset_location = Photo.objects.filter(Q(user = request.user, geom__isnull=False)).exclude(geom__exact='')
-
-        serializer_class = PhotoLocalizationSerializer(queryset_location, many=True)
-
-        #print(serializer_class.data)
-   
-
-        """
+        #queryset_location = Photo.objects.filter(Q(user = request.user, geom__isnull=False)).exclude(geom__exact='')
+        #serializer_class = PhotoLocalizationSerializer(queryset_location, many=True)
+       
         data_list = []
         for photo in Photo.objects.exclude(geom = 'null').filter(user=request.user):
             json = {
@@ -280,7 +297,8 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
               "properties": {
                 'photo': str(photo.image),
                 'description': photo.description,
-                'album': str(photo.album)
+                'album': str(photo.album),
+                'photo_pk': photo.pk
               },
               "geometry": photo.geom,
             }
@@ -291,12 +309,9 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
           "features": data_list
         }
 
-        print(serializer_class.data)
         return Response(featureCollection, status=status.HTTP_200_OK)
-        """
-        #return Response(serializer_class.data)
-        return JsonResponse(serializer_class.data)
         
+  
 
 
     def get(self, request, format=None):

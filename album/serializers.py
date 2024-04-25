@@ -108,7 +108,7 @@ class PhotoLocalizationSerializer(GeoFeatureModelSerializer):
 
         # you can also explicitly declare which fields you want to include
         # as with a ModelSerializer.
-        fields = ('image', 'user')
+        fields = ('image', 'user', 'pk')
 
 
 class ContactSerializer(serializers.ModelSerializer):
