@@ -8,7 +8,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import permissions, generics, status
 from rest_framework.permissions import IsAuthenticated
-from album.serializers import PhotoSerializer, AlbumSerializer, CreateAlbumSerializer, PhotoLocalizationSerializer, ContactSerializer
+from album.serializers import PhotoSerializer, AlbumSerializer, CreateAlbumSerializer, UserSerializer,  PhotoLocalizationSerializer, ContactSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.renderers import JSONRenderer
@@ -34,6 +34,9 @@ from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
 from django.core.serializers import serialize
 
+import subprocess
+import json 
+import struct
 
 from .serializers import RegistrationSerializer, PasswordChangeSerializer, LoginSerializer
 
@@ -188,6 +191,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create photo object"""
+
+        permission_to_upload = self.evaluateUserSize(request)
               
         user = request.user
         album = Album.objects.filter(title=request.data['album'])[0]
@@ -223,20 +228,23 @@ class PhotoViewSet(viewsets.ModelViewSet):
             "user": user.id, 
         }
 
-        
-        # For now, allow only create photos to staff members 
-        if user.is_staff:
-            serializer = self.serializer_class(data=data, context={'user': user})
-        
-
-        if serializer.is_valid():
-            serializer.save()
-            if str(request.data['image']).split('.')[-1] == 'HEIC':
-                os.remove(name)
-                #shutil.rmtree('/var/www/html/files/')
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        if permission_to_upload:
+            # For now, allow only create photos to staff members 
+            if user.is_staff:
+                serializer = self.serializer_class(data=data, context={'user': user})
+            
+            if serializer.is_valid():
+                serializer.save()
+                if str(request.data['image']).split('.')[-1] == 'HEIC':
+                    os.remove(name)
+                    #shutil.rmtree('/var/www/html/files/')
+                return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
         else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response('NOT')
+            
 
     def destroy(self, request, pk=None):
 
@@ -252,6 +260,26 @@ class PhotoViewSet(viewsets.ModelViewSet):
             pass 
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    def evaluateUserSize(self, request):
+        """
+        Function to evaluate if user has disk space 
+        """
+        user = User.objects.filter(id=request.user.id)[0]
+ 
+        bashCommand = "aws s3 ls --summarize --human-readable --recursive s3://keepyourphoto/images/user_"+str(user.id)+"/ | tail -1 | awk '{print $3}' "
+
+        output = subprocess.check_output(bashCommand, shell=True)
+        
+        bytes_data = output.decode('utf-8')
+  
+        total_size = float(bytes_data)
+
+        if total_size > user.contracted_size:
+            return False # cannot update new photos
+        else:
+            return True # allowed to update new photos 
+
         
 
 class PhotoSingleViewset(viewsets.ViewSet):
@@ -320,6 +348,37 @@ class PhotoLocalizationViewSet(viewsets.ViewSet):
             'auth': str(request.auth),  # None
         }
         return Response(content)
+
+
+"""
+*****************************
+*                           *
+*   Views for user info     *
+*                           *
+*****************************
+"""
+
+
+class UserInfo(viewsets.ViewSet):
+    """ Views for user """
+
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['id', 'user', 'album', 'paid']
+    
+    def list(self, request):
+        """ List user info """
+
+        user = request.user
+        #queryset = User.objects.filter(pk = request.user.pk)
+        queryset = User.objects.all()
+        serializer_class = UserSerializer(queryset)
+
+        return Response(serializer_class.data)
+        
 
 
 

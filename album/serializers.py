@@ -111,6 +111,14 @@ class PhotoLocalizationSerializer(GeoFeatureModelSerializer):
         fields = ('image', 'user', 'pk')
 
 
+class UserSerializer(serializers.ModelSerializer):
+    """ A class to serialize user information """
+   
+    class Meta:
+        model = User
+        fields = ('email', 'birth_date', 'paid', 'contracted_size',)
+
+
 class ContactSerializer(serializers.ModelSerializer):
     """Class to serialize contact"""
 

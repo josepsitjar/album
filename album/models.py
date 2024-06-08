@@ -109,6 +109,8 @@ class User(AbstractUser):
     location = models.CharField(max_length=30, blank=True, null=True)
     birth_date = models.DateField(null=True, blank=True)
     albums = models.ManyToManyField(Album, blank=True, related_name='albums_user')
+    contracted_size = models.FloatField(blank=True, null=True)
+    paid = models.BooleanField(blank=True, null=True, default=False)
 
 
 

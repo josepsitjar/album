@@ -6,13 +6,14 @@ from rest_framework_simplejwt import views as jwt_views
 from rest_framework.authtoken import views
 
 
-from album.album_views import PhotoViewSet, PhotoSingleViewset, RegistrationView, LoginView, ContactViewSet
+from album.album_views import PhotoViewSet, PhotoSingleViewset, RegistrationView, LoginView, ContactViewSet, UserInfo
 
 router = routers.DefaultRouter()
 router.register(r'photos', album_views.PhotoViewSet)
 router.register(r'single_photo', album_views.PhotoSingleViewset)
 router.register(r'albums', album_views.AlbumViewSet)
 router.register(r'photosGeojson', album_views.PhotoLocalizationViewSet) # photos geojson feature collection
+router.register(r'userinfo', album_views.UserInfo)
 
 
 
