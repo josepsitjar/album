@@ -140,7 +140,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
         
-
+# resize image --> https://djangoguide.com/django-image-upload-specialization/image-upload-and-resize-django-rest-framework/
 class PhotoViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows photos to be viewed or edited.
@@ -191,7 +191,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create photo object"""
-
+        print('creating')
         permission_to_upload = self.evaluateUserSize(request)
               
         user = request.user
@@ -224,6 +224,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
             "geom": geom,
             #"image": request.data['image'],
             "image": img_field,
+            "thumbnail": img_field,
+            #"resized_image": img_field,
             #"image": 'https://www.unigis.es/wp-content/uploads/2019/05/home5.jpg',
             "user": user.id, 
         }

@@ -36,6 +36,16 @@ def user_directory_path(instance, filename):
                                             instance.album.id, 
                                             file_name[-1])
 
+def resized_directory_path(instance, filename):
+    """
+    Define the path where resized images will be saved. 
+    """
+    file_name = filename.split('/')
+    return 'images/user_{0}/{1}/resized/{2}'.format(instance.user.id, 
+                                            instance.album.id, 
+                                            file_name[-1])
+
+
 
 def album_directory_path(instance, filename):
     """

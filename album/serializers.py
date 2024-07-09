@@ -1,12 +1,15 @@
 from album.models import Photo, Person, Album, User, Contact
 from rest_framework import serializers
 from django.contrib.auth import authenticate, login
+from django.core.files.base import ContentFile
 from .utils import get_tokens_for_user, get_drf_user_token
 from rest_framework.response import  Response
 from rest_framework import permissions, generics, status
 
 from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
 from django.contrib.gis.geos import Point
+
+from io import BytesIO
 
 from PIL import Image
 
@@ -61,7 +64,8 @@ class PhotoSerializer(serializers.ModelSerializer):
         
         photo = Photo(title = self.validated_data['title'],
                       user = User.objects.filter(id=self.validated_data['user'].id)[0],
-                      image = self.validated_data['image'], 
+                      image = self.validated_data['image'],
+                      thumbnail = self.validated_data['image'],  
                       geom = self.validated_data['geom'],
                       description = self.validated_data['description'],
                       #album = Album.objects.filter(title=self.validated_data['album'])[0]
@@ -87,13 +91,16 @@ class PhotoSerializer(serializers.ModelSerializer):
             except:
                 pass
         
+
         photo.save()
         
         return photo
+    
+   
 
     class Meta:
         model = Photo
-        fields = ['title', 'description', 'created_date', 'geom', 'image', 'user', 'album', 'pk']
+        fields = ['title', 'description', 'created_date', 'geom', 'image', 'thumbnail', 'user', 'album', 'pk']
 
 
 class PhotoLocalizationSerializer(GeoFeatureModelSerializer):

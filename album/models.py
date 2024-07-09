@@ -8,6 +8,7 @@ from django.contrib.auth.models import (
 from django.utils import timezone
 from django.dispatch import receiver
 
+from django_advance_thumbnail import AdvanceThumbnailField
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
@@ -16,7 +17,7 @@ from djgeojson.fields import PointField, GeometryField
 import os
 
 
-from .utils import user_directory_path, album_directory_path
+from .utils import user_directory_path, album_directory_path, resized_directory_path
 
 
 # Create your models here.
@@ -64,6 +65,8 @@ class Photo(models.Model):
     album = models.ForeignKey(Album, related_name='photos', on_delete=models.SET_NULL, null=True, blank=True)
     persons = models.ManyToManyField(Person, blank=True)
     image = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
+    thumbnail = AdvanceThumbnailField(source_field='image', upload_to=resized_directory_path, null=True, blank=True,
+                                      size=(300, 300)) 
     tags = models.CharField(max_length=4000, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
