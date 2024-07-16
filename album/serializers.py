@@ -2,6 +2,7 @@ from album.models import Photo, Person, Album, User, Contact
 from rest_framework import serializers
 from django.contrib.auth import authenticate, login
 from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from .utils import get_tokens_for_user, get_drf_user_token
 from rest_framework.response import  Response
 from rest_framework import permissions, generics, status
@@ -65,7 +66,7 @@ class PhotoSerializer(serializers.ModelSerializer):
         photo = Photo(title = self.validated_data['title'],
                       user = User.objects.filter(id=self.validated_data['user'].id)[0],
                       image = self.validated_data['image'],
-                      thumbnail = self.validated_data['image'],  
+                      #thumbnail = self.validated_data['image'],  # don't put thumnail here, in order not tu duplicate image 
                       geom = self.validated_data['geom'],
                       description = self.validated_data['description'],
                       #album = Album.objects.filter(title=self.validated_data['album'])[0]
@@ -90,10 +91,28 @@ class PhotoSerializer(serializers.ModelSerializer):
                         photo.created_date = datetime_object
             except:
                 pass
-        
 
+        # create img thumbnail 
+        image = Image.open(photo.image)
+        image.thumbnail((300, 300))
+        image_file = BytesIO()
+        image.save(image_file, image.format)
+        photo.thumbnail.save(
+            'thumbnail_' + photo.image.name,
+            InMemoryUploadedFile(
+                image_file,
+                None,
+                None,
+                photo.image.file.content_type,
+                image_file.tell(),
+                photo.image.file.charset,
+            ),
+            save=False,
+        )
+
+        # save photo 
         photo.save()
-        
+
         return photo
     
    

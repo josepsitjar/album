@@ -65,13 +65,16 @@ class Photo(models.Model):
     album = models.ForeignKey(Album, related_name='photos', on_delete=models.SET_NULL, null=True, blank=True)
     persons = models.ManyToManyField(Person, blank=True)
     image = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
-    thumbnail = AdvanceThumbnailField(source_field='image', upload_to=resized_directory_path, null=True, blank=True,
-                                      size=(300, 300)) 
+    thumbnail = models.ImageField(upload_to=resized_directory_path, null=True, blank=True) 
     tags = models.CharField(max_length=4000, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.title
+
+
+# create thumbnail
+# https://gist.github.com/valberg/2429288 
 
 # delte files on delete Photo instance
 @receiver(models.signals.post_delete, sender=Photo)
@@ -82,6 +85,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     
     try:
         instance.image.delete(save=False)
+        instance.thumbnail.delete(save=False)
     except:
         pass
 

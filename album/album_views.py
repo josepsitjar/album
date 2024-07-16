@@ -40,6 +40,8 @@ import struct
 
 from .serializers import RegistrationSerializer, PasswordChangeSerializer, LoginSerializer
 
+from rest_framework.pagination import PageNumberPagination
+
 
 # Pillow 
 from PIL import Image
@@ -145,7 +147,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows photos to be viewed or edited.
     """
-   
+
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
     permission_classes = [IsAuthenticated]
@@ -155,7 +157,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
     filterset_fields = ['id', 'user', 'album', 'querytext']
     
     def list(self, request, format=None):
-
+        
         user = User.objects.filter(id=request.user.id)[0]
 
         """
@@ -185,9 +187,19 @@ class PhotoViewSet(viewsets.ModelViewSet):
             queryset = Photo.objects.filter(album__id = request.query_params['album']).order_by('-created_date').exclude(image__exact='')
             
 
-        serializer_class = PhotoSerializer(queryset, many=True)
+        #serializer_class = PhotoSerializer(queryset, many=True)
   
-        return Response(serializer_class.data)
+        # This is for paginator 
+        # Returns pagination 
+        paginator = PageNumberPagination()
+        page = paginator.paginate_queryset(queryset, request)
+        
+        if page is not None:    
+            serializer_class = PhotoSerializer(page, many=True)
+            return paginator.get_paginated_response(serializer_class.data)
+        else:
+            serializer_class = PhotoSerializer(queryset, many=True)
+            return Response(serializer_class.data)
 
     def create(self, request, *args, **kwargs):
         """Create photo object"""
@@ -224,19 +236,21 @@ class PhotoViewSet(viewsets.ModelViewSet):
             "geom": geom,
             #"image": request.data['image'],
             "image": img_field,
-            "thumbnail": img_field,
+            #"thumbnail": img_field,
             #"resized_image": img_field,
             #"image": 'https://www.unigis.es/wp-content/uploads/2019/05/home5.jpg',
             "user": user.id, 
         }
 
         if permission_to_upload:
+            print('permission to upload')
             # For now, allow only create photos to staff members 
             if user.is_staff:
                 serializer = self.serializer_class(data=data, context={'user': user})
             
             if serializer.is_valid():
                 serializer.save()
+                
                 if str(request.data['image']).split('.')[-1] == 'HEIC':
                     os.remove(name)
                     #shutil.rmtree('/var/www/html/files/')
