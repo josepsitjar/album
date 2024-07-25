@@ -77,7 +77,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'djoser',
-    'django_advance_thumbnail',
+    #'django_advance_thumbnail',
     'album.apps.AlbumConfig',
     'leaflet',
     'django_filters',
