@@ -117,9 +117,10 @@ class AlbumViewSet(viewsets.ModelViewSet):
 
         
         # For now, allow only create albums to staff members 
-        if user.is_staff:
-            serializer = serializer_class_album_creation(data=data, context={'user': user})
-        
+        #if user.is_staff:
+        #    serializer = serializer_class_album_creation(data=data, context={'user': user})
+        # Allow create albums everyone 
+        serializer = serializer_class_album_creation(data=data, context={'user': user})
 
         if serializer.is_valid():
             serializer.save()
@@ -245,8 +246,10 @@ class PhotoViewSet(viewsets.ModelViewSet):
         if permission_to_upload:
             print('permission to upload')
             # For now, allow only create photos to staff members 
-            if user.is_staff:
-                serializer = self.serializer_class(data=data, context={'user': user})
+            #if user.is_staff:
+            #    serializer = self.serializer_class(data=data, context={'user': user})
+            # allow everyone
+            serializer = self.serializer_class(data=data, context={'user': user})
             
             if serializer.is_valid():
                 serializer.save()
