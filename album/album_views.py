@@ -245,10 +245,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
         if permission_to_upload:
             print('permission to upload')
-            # For now, allow only create photos to staff members 
-            #if user.is_staff:
-            #    serializer = self.serializer_class(data=data, context={'user': user})
-            # allow everyone
+            
             serializer = self.serializer_class(data=data, context={'user': user})
             
             if serializer.is_valid():
@@ -271,12 +268,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
         """
         Only staff users can delete images 
         """
-        if user.is_staff:
-            id = request.data['pk']
-            image = Photo.objects.filter(pk=id)
-            image.delete()
-        else:
-            pass 
+        id = request.data['pk']
+        image = Photo.objects.filter(pk=id)
+        image.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
     
